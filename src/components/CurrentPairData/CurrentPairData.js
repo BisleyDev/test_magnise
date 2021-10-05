@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import configAPI from "../../api/config.js";
+import moment from "moment/moment";
 
 const initialState = {
     pair: '', price: '', date: ''
@@ -9,13 +10,14 @@ const CurrentPairData = ({pair}) => {
     const [currentData, setCurrentData] = useState(initialState)
 
     useEffect(() => {
-        const ws = new WebSocket('wss://ws-sandbox.coinapi.io/v1/')
+        const ws = new WebSocket('wss://ws.coinapi.io/v1/')
         const paramsCall = {
             "type": "hello",
             "apikey": configAPI.API_KEY,
             "heartbeat": false,
-            "subscribe_data_type": ["quote"],
-            "subscribe_filter_symbol_id": [`COINBASE_SPOT_${pair.replace('/', '_')}`]
+            "subscribe_data_type": ["trade"],
+            "subscribe_filter_symbol_id": [`COINBASE_SPOT_${pair.replace('/', '_')}`],
+            "subscribe_update_limit_ms_quote": 100,
         }
         ws.onopen = () => {
             ws.send(JSON.stringify(paramsCall))
@@ -24,31 +26,34 @@ const CurrentPairData = ({pair}) => {
         ws.onmessage = function (event) {
             const json = JSON.parse(event.data);
             try {
-                if ((json.event = "data")) {
-                    setCurrentData({
+                if ((json.event = "trade")) {
+                    setCurrentData(prev => ({
                         pair,
-                        price: json.data.ask_price,
-                        date: json.date.time_exchange
-                    })
+                        price: json.price,
+                        date: moment(json.time_exchange).format('lll')
+                    }))
                 }
             } catch (err) {
                 console.log(err);
             }
         };
+        return () => {
+            ws.close()
+        }
     }, [pair])
 
     return (
         <ul>
             <li>
-                <span>Symbol:</span>
+                <span>Symbol: </span>
                 <span>{currentData.pair}</span>
             </li>
             <li>
-                <span>Price:</span>
+                <span>Price: </span>
                 <span>{currentData.price}</span>
             </li>
             <li>
-                <span>Time:</span>
+                <span>Time: </span>
                 <span>{currentData.date}</span>
             </li>
         </ul>
