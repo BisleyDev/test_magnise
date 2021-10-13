@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import configAPI from "../../api/config.js";
 import moment from "moment/moment";
+import getLastPricePair from "../../api/getLastPricePair";
 
 const initialState = {
     pair: '', price: '', date: ''
@@ -8,15 +9,15 @@ const initialState = {
 
 const CurrentPairData = ({pair}) => {
     const [currentData, setCurrentData] = useState(initialState)
-
     useEffect(() => {
+        setCurrentData({...initialState, pair: pair})
         const ws = new WebSocket('wss://ws.coinapi.io/v1/')
         const paramsCall = {
             "type": "hello",
             "apikey": configAPI.API_KEY,
             "heartbeat": false,
             "subscribe_data_type": ["trade"],
-            "subscribe_filter_symbol_id": [`COINBASE_SPOT_${pair.replace('/', '_')}`],
+            "subscribe_filter_symbol_id": [`BITSTAMP_SPOT_${pair.replace('/', '_')}`],
             "subscribe_update_limit_ms_quote": 100,
         }
         ws.onopen = () => {
@@ -37,6 +38,17 @@ const CurrentPairData = ({pair}) => {
                 console.log(err);
             }
         };
+        if(!currentData.price) {
+            (async () => {
+                const res = await getLastPricePair(pair.replace('/', '_'))
+                console.log(res)
+                res && setCurrentData(prev => ({
+                    pair,
+                    price: res[0].price,
+                    date: moment(res[0].data_trade_end).format('lll')
+                }))
+            })()
+        }
         return () => {
             ws.close()
         }
