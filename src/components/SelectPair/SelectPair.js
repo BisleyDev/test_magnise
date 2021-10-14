@@ -16,14 +16,13 @@ const SelectPair = ({getSelectPair}) => {
                 console.log(e)
             }
         })()
-
     }, [])
     return (
         <>
             <select onChange={event => setSelectedPair(event.target.value)}>
                 <option disabled value=''>Select pair</option>
-                {pairs.map(pair => (
-                    <option key={pair} value={pair}>{pair}</option>
+                {pairs.map((pair, index) => (
+                    <option key={pair + index} value={pair}>{pair}</option>
                 ))}
             </select>
             <button onClick={event => getSelectPair(selectedPair)}>Subscribe</button>

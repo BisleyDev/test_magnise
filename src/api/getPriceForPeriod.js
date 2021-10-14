@@ -2,7 +2,7 @@ import axios from "axios";
 import configAPI from "./config.js";
 
 export default async function getPriceForPeriod(pair = 'BTC_USD', period = '1DAY') {
-    const URL = `https://rest.coinapi.io/v1/ohlcv/BITSTAMP_SPOT_${pair}/latest?period_id=${period}`
+    const URL = `https://rest.coinapi.io/v1/ohlcv/BINANCE_SPOT_${pair}/latest?period_id=${period}`
     const headers = {
         'X-CoinAPI-Key': configAPI.API_KEY
     }

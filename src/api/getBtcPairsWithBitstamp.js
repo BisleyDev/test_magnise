@@ -7,7 +7,7 @@ export default async function getBtcPairsWithBitstamp() {
         'X-CoinAPI-Key': configAPI.API_KEY
     }
     const params = {
-        filter_exchange_id: 'BITSTAMP',
+        filter_exchange_id: 'BINANCE',
         filter_symbol_id: 'BTC'
     }
     try{
