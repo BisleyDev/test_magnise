@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import getBtcPairsWithBitstamp from "../../api/getBtcPairsWithBitstamp";
+import getBtcPairsWithBinance from "../../api/getBtcPairsWithBinance";
 
 const SelectPair = ({getSelectPair}) => {
     const [pairs, setPairs] = useState([])
@@ -8,7 +8,7 @@ const SelectPair = ({getSelectPair}) => {
     useEffect( () => {
         (async ()=>{
             try{
-                const res = await getBtcPairsWithBitstamp()
+                const res = await getBtcPairsWithBinance()
                 const parseData = res.map(item => `${item.asset_id_base}/${item.asset_id_quote}`)
                 setPairs(parseData)
                 getSelectPair(parseData[0])

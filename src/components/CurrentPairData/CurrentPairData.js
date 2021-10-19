@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import configAPI from '../../api/config.js';
+import {configAPI} from '../../api/config.js';
 import moment from 'moment/moment';
 import getLastPricePair from '../../api/getLastPricePair';
 
@@ -11,7 +11,6 @@ const initialState = {
 
 const CurrentPairData = ({ pair }) => {
 	const [currentData, setCurrentData] = useState(initialState);
-	console.log(currentData);
 	useEffect(() => {
 		const lastPrise = async () => {
 			try {
@@ -35,7 +34,6 @@ const CurrentPairData = ({ pair }) => {
 			heartbeat: false,
 			subscribe_data_type: ['trade'],
 			subscribe_filter_symbol_id: [`BINANCE_SPOT_${pair.replace('/', '_')}`],
-			// subscribe_update_limit_ms_quote: 100,
 		};
 		ws.onopen = () => {
 			ws.send(JSON.stringify(paramsCall));
